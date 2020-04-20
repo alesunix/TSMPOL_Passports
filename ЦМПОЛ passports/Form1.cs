@@ -41,17 +41,14 @@ namespace ЦМПОЛ_passports
         //-----------------------------------------------------------------------//
         private void Form1_Load(object sender, EventArgs e)//Загрузка формы
         {
-            //form2.ShowDialog();
-            form2.AccessF2.Text = form2.Data;
-            form2.AccessF2.Text = Clipboard.GetText();//Считать текст из буфера обмена 
-            if (form2.AccessF2.Text == "medium")
+            if (Dostup.Access == "medium")
             {
                 comboBox4.Enabled = false;
                 textBox4.Enabled = false;
                 comboBox3.Enabled = false;
                 button5.Enabled = false;
             }
-            if (form2.AccessF2.Text == "low")
+            if (Dostup.Access == "low")
             {
                 tabPage2.Enabled = false;
             }

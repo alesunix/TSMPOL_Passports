@@ -14,8 +14,6 @@ namespace ЦМПОЛ_passports
 {
     public partial class Form2 : Form
     {
-        public string Data
-        { get { return AccessF2.Text; } }
 
         SqlConnection con = new SqlConnection(@"Data Source=192.168.99.4;Initial Catalog=CmpolBase;Persist Security Info=True;User ID=Lan;Password=Samsung0");
         public Form2()
@@ -36,7 +34,6 @@ namespace ЦМПОЛ_passports
             SqlDataAdapter da = new SqlDataAdapter(cmd);//создаем экземпляр класса SqlDataAdapter
             dt.Clear();//чистим DataTable, если он был не пуст
             da.Fill(dt);//заполняем данными созданный DataTable
-            //comboBoxF2.DataSource = dt;//в качестве источника данных у dataGridView используем DataTable заполненный данными
             foreach (DataRow row in dt.Rows)
             {
                 comboBoxF2.Items.Add(row[0].ToString());
@@ -45,8 +42,6 @@ namespace ЦМПОЛ_passports
         }
         private void Form2_Load(object sender, EventArgs e)//Загрузка формы
         {
-            AccessF2.Visible = false;
-            DGVF2.Visible = false;
             users_select();
             comboBoxF2.SelectedIndex = 1;//пользователь по умолчанию
             textBox1.Select();//Установка курсора          
@@ -63,19 +58,18 @@ namespace ЦМПОЛ_passports
             SqlDataAdapter da1 = new SqlDataAdapter(cmd1);//создаем экземпляр класса SqlDataAdapter
             dt1.Clear();//чистим DataTable, если он был не пуст
             da1.Fill(dt1);//заполняем данными созданный DataTable
-            DGVF2.DataSource = dt1;//в качестве источника данных у dataGridView используем DataTable заполненный данными
             con.Close();//Закрываем соединение
-            AccessF2.Text = Convert.ToString(DGVF2.Rows[0].Cells[3].Value);//cчитать значение с грида
+            Dostup.Access = dt1.Rows[0][3].ToString();//Доступ
+            Dostup.Login = dt1.Rows[0][1].ToString();//Логин
 
-            if (textBox1.Text != "" & Convert.ToString(DGVF2.Rows[0].Cells[2].Value) == textBox1.Text)
+            if (textBox1.Text != "" & dt1.Rows[0][2].ToString() == textBox1.Text)
             {
-                Clipboard.SetText(AccessF2.Text);//Скопировать текст в буфер обмена
                 Form1 Form1 = new Form1();
                 //P.label1.Text = "Добро пожаловать! " + comboBoxF2.Text;
                 Form1.Show();
                 this.Hide();
             }
-            else if(Convert.ToString(DGVF2.Rows[0].Cells[2].Value) != textBox1.Text)
+            else if(dt1.Rows[0][2].ToString() != textBox1.Text)
             {
                 MessageBox.Show("Неверный пароль", "Внимание!");
             }

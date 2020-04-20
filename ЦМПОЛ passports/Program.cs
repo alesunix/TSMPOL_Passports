@@ -16,6 +16,12 @@ namespace ЦМПОЛ_passports
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form2());
-        }
+        }       
+    }
+
+    static class Dostup
+    {
+        public static string Access { get; set; }
+        public static string Login { get; set; }
     }
 }
