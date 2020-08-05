@@ -45,7 +45,10 @@
             this.label11 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button6 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.comboBox7 = new System.Windows.Forms.ComboBox();
+            this.button9 = new System.Windows.Forms.Button();
             this.textBox11 = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.comboBox5 = new System.Windows.Forms.ComboBox();
@@ -70,7 +73,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
-            this.button7 = new System.Windows.Forms.Button();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -306,9 +308,26 @@
             this.button6.UseVisualStyleBackColor = false;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
+            // button7
+            // 
+            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button7.BackColor = System.Drawing.Color.LemonChiffon;
+            this.button7.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Khaki;
+            this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button7.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button7.Location = new System.Drawing.Point(204, 69);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(300, 36);
+            this.button7.TabIndex = 22;
+            this.button7.Text = "Отобразить за период";
+            this.button7.UseVisualStyleBackColor = false;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
             // tabPage2
             // 
             this.tabPage2.AutoScroll = true;
+            this.tabPage2.Controls.Add(this.comboBox7);
+            this.tabPage2.Controls.Add(this.button9);
             this.tabPage2.Controls.Add(this.textBox11);
             this.tabPage2.Controls.Add(this.button2);
             this.tabPage2.Controls.Add(this.comboBox5);
@@ -340,6 +359,36 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Администратор";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // comboBox7
+            // 
+            this.comboBox7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox7.BackColor = System.Drawing.SystemColors.Info;
+            this.comboBox7.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox7.FormattingEnabled = true;
+            this.comboBox7.Items.AddRange(new object[] {
+            "Обычный",
+            "Срочный",
+            "На дом",
+            "МИД"});
+            this.comboBox7.Location = new System.Drawing.Point(467, 97);
+            this.comboBox7.Name = "comboBox7";
+            this.comboBox7.Size = new System.Drawing.Size(121, 21);
+            this.comboBox7.TabIndex = 43;
+            this.comboBox7.SelectedIndexChanged += new System.EventHandler(this.ComboBox7_SelectedIndexChanged);
+            // 
+            // button9
+            // 
+            this.button9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button9.BackColor = System.Drawing.Color.Green;
+            this.button9.Font = new System.Drawing.Font("Arial Black", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button9.Location = new System.Drawing.Point(428, 58);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(204, 36);
+            this.button9.TabIndex = 42;
+            this.button9.Text = "Загрузить пункты из Excel";
+            this.button9.UseVisualStyleBackColor = false;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // textBox11
             // 
@@ -588,21 +637,6 @@
             this.label18.Size = new System.Drawing.Size(144, 15);
             this.label18.TabIndex = 41;
             this.label18.Text = "Цена за 1ед. паспорта";
-            // 
-            // button7
-            // 
-            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button7.BackColor = System.Drawing.Color.LemonChiffon;
-            this.button7.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Khaki;
-            this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button7.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button7.Location = new System.Drawing.Point(204, 69);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(300, 36);
-            this.button7.TabIndex = 22;
-            this.button7.Text = "Отобразить за период";
-            this.button7.UseVisualStyleBackColor = false;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // dataGridView2
             // 
@@ -1082,6 +1116,8 @@
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.TextBox textBox18;
         private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.ComboBox comboBox7;
     }
 }
 

@@ -10,6 +10,8 @@ using Word = Microsoft.Office.Interop.Word;
 using System.Deployment.Application;
 using System.Reflection;
 using System.Threading;
+using System.IO;
+using ExcelDataReader;
 
 namespace ЦМПОЛ_passports
 {
@@ -52,7 +54,7 @@ namespace ЦМПОЛ_passports
             {
                 tabPage2.Enabled = false;
             }
-            dateTimePicker1.Value = DateTime.Today;
+            dateTimePicker1.Value = DateTime.Today.AddMonths(-1);
             dateTimePicker2.Value = DateTime.Today;
             dateTimePicker3.Value = DateTime.Today;
 
@@ -136,29 +138,13 @@ namespace ЦМПОЛ_passports
             //dataGridView1.DataSource = dt;//в качестве источника данных у dataGridView используем DataTable заполненный данными
             //con.Close();//Закрываем соединение 
 
-            //con.Open();//открыть соединение
-            //SqlCommand cmd = con.CreateCommand();
-            //cmd.CommandType = CommandType.Text;
-            //cmd.CommandText = "SELECT max(id) AS Id, date, MAX(reis) AS Рейсы, SUM(id_id) AS ID, SUM(ip_ip) AS ОГП, SUM(itogo) AS Итого, MIN(primecanie) AS Примечание," +
-            //    " MIN(type) AS Тип, MIN(punkt) AS Пункт, MIN(processing) AS Processing, MIN(date_processing) AS Дата_обработки, MIN(akt) AS Акт FROM [Table_pass]" +
-            //    " WHERE date BETWEEN @StartDate AND @EndDate GROUP BY date ORDER BY date";
-            //cmd.Parameters.AddWithValue("@StartDate", DateTime.Today.AddMonths(-12));
-            //cmd.Parameters.AddWithValue("@EndDate", DateTime.Today);
-            //cmd.ExecuteNonQuery();
-            //DataTable dt = new DataTable();//создаем экземпляр класса DataTable
-            //SqlDataAdapter da = new SqlDataAdapter(cmd);//создаем экземпляр класса SqlDataAdapter
-            //dt.Clear();//чистим DataTable, если он был не пуст
-            //da.Fill(dt);//заполняем данными созданный DataTable
-            //dataGridView1.DataSource = dt;//в качестве источника данных у dataGridView используем DataTable заполненный данными
-            //con.Close();//закрыть соединение    
-
             con.Open();//открыть соединение
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;
-            cmd.CommandText = "SELECT id AS Id, date AS Дата, reis AS Рейсы, id_id AS eID, ip_ip AS ОГП, itogo AS Итого, primecanie AS Примечание," +
-                " type AS Тип, punkt AS ОПРН, akt AS Акт, marshrut AS Маршруты FROM [Table_pass]" +
-                " WHERE date BETWEEN @StartDate AND @EndDate ORDER BY date";//WHERE reis NOT IN ('0') чтобы не отображать нулевые
-            cmd.Parameters.AddWithValue("@StartDate", DateTime.Today.AddMonths(-1));
+            cmd.CommandText = "SELECT max(id) AS Id, date, MAX(reis) AS Рейсы, SUM(id_id) AS ID, SUM(ip_ip) AS ОГП, SUM(itogo) AS Итого, MIN(primecanie) AS Примечание," +
+                " MIN(type) AS Тип, MIN(punkt) AS Пункт, MIN(processing) AS Processing, MIN(date_processing) AS Дата_обработки, MIN(akt) AS Акт FROM [Table_pass]" +
+                " WHERE date BETWEEN @StartDate AND @EndDate GROUP BY date ORDER BY date";
+            cmd.Parameters.AddWithValue("@StartDate", DateTime.Today.AddMonths(-12));
             cmd.Parameters.AddWithValue("@EndDate", DateTime.Today);
             cmd.ExecuteNonQuery();
             DataTable dt = new DataTable();//создаем экземпляр класса DataTable
@@ -166,7 +152,23 @@ namespace ЦМПОЛ_passports
             dt.Clear();//чистим DataTable, если он был не пуст
             da.Fill(dt);//заполняем данными созданный DataTable
             dataGridView1.DataSource = dt;//в качестве источника данных у dataGridView используем DataTable заполненный данными
-            con.Close();//закрыть соединение            
+            con.Close();//закрыть соединение    
+
+            //con.Open();//открыть соединение
+            //SqlCommand cmd = con.CreateCommand();
+            //cmd.CommandType = CommandType.Text;
+            //cmd.CommandText = "SELECT id AS Id, date AS Дата, reis AS Рейсы, id_id AS eID, ip_ip AS ОГП, itogo AS Итого, primecanie AS Примечание," +
+            //    " type AS Тип, punkt AS ОПРН, akt AS Акт, marshrut AS Маршруты FROM [Table_pass]" +
+            //    " WHERE date BETWEEN @StartDate AND @EndDate ORDER BY date";//WHERE reis NOT IN ('0') чтобы не отображать нулевые
+            //cmd.Parameters.AddWithValue("@StartDate", DateTime.Today.AddMonths(-1));
+            //cmd.Parameters.AddWithValue("@EndDate", DateTime.Today);
+            //cmd.ExecuteNonQuery();
+            //DataTable dt = new DataTable();//создаем экземпляр класса DataTable
+            //SqlDataAdapter da = new SqlDataAdapter(cmd);//создаем экземпляр класса SqlDataAdapter
+            //dt.Clear();//чистим DataTable, если он был не пуст
+            //da.Fill(dt);//заполняем данными созданный DataTable
+            //dataGridView1.DataSource = dt;//в качестве источника данных у dataGridView используем DataTable заполненный данными
+            //con.Close();//закрыть соединение            
         }
         public void punkt_select()//Вывод Пункт в Combobox
         {
@@ -787,15 +789,15 @@ namespace ЦМПОЛ_passports
             for (int i = 0; i < dataGridView1.Rows.Count; i++)//Цикл
             {
                 string punkt = Convert.ToString(dataGridView1.Rows[i].Cells[8].Value);
-                    if (punkt.Contains("ПЕРВОМАЙСКОГО") | punkt.Contains("ОКТЯБРЬСКОГО"))
+                    if (punkt.Contains("ОКТЯБРЬСКОГО"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ЦОН-1");
-                        cmd.Parameters.AddWithValue("@stoimost", 510);
+                        cmd.Parameters.AddWithValue("@stoimost", 583);
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("АЛАМУДУНСКОГО") | punkt.Contains("ЛЕБЕДИНОВКА") | punkt.Contains("СВЕРДЛОВСКОГО") | punkt.Contains("ВЕРХНЯЯ ЗОНА ТАШ-ТОБО") | punkt.Contains("НИЖНЯЯ ЗОНА ОКТЯБРЬСКИЙ"))
+                    if (punkt.Contains("ПЕРВОМАЙСКОГО") | punkt.Contains("СВЕРДЛОВСКОГО"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ЦОН-2");
@@ -811,23 +813,23 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("ОШ") | punkt.Contains("АМИР-ТЕМИР") | punkt.Contains("ТОЛОЙКОН"))
+                    if (punkt.Contains("АЛАМУДУН"))
+                    {
+                    SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
+                    cmd.Parameters.AddWithValue("@marshrut", "ЦОН-4");
+                    cmd.Parameters.AddWithValue("@stoimost", 582);
+                    cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
+                    cmd.ExecuteNonQuery();
+                    }
+                    if (punkt.Contains("ОШ") | punkt.Contains("АМИР-ТЕМИР") | punkt.Contains("ТОЛОЙКОН") | punkt.Contains("МАНАС-АТА"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ЦОН 1 г. ОШ");
-                        cmd.Parameters.AddWithValue("@stoimost", 2507);
+                        cmd.Parameters.AddWithValue("@stoimost", 2050);
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
-                    }
-                if (punkt.Contains("МАНАС-АТА"))
-                {
-                    SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
-                    cmd.Parameters.AddWithValue("@marshrut", "ЦОН 2 г. ОШ");
-                    cmd.Parameters.AddWithValue("@stoimost", 2507);
-                    cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
-                    cmd.ExecuteNonQuery();
-                }
-                if (punkt.Contains("ЖАЛАЛ-АБАД"))
+                    }                
+                    if (punkt.Contains("ЖАЛАЛ-АБАД"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ЦОН 2 г. Жалал-Абад");
@@ -835,8 +837,8 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("КЫЗЫЛ-КИ") | punkt.Contains("КАДАМЖАЙ") | punkt.Contains("БАТКЕН") | punkt.Contains("НООКАТ") | punkt.Contains("КОК-ЖАР") | punkt.Contains("БОЗ-АДЫР") |
-                        punkt.Contains("ЖАНЫ-БАЗАР") | punkt.Contains("МАСАЛИЕВ") | punkt.Contains("АЙДАРКЕН") | punkt.Contains("КАЙТПАС") | punkt.Contains("МАРКАЗ") | punkt.Contains("САМАРКАНДЕК"))
+                    if (punkt.Contains("КЫЗЫЛ-КИ") | punkt.Contains("КАДАМЖАЙ") | punkt.Contains("БАТКЕН") | punkt.Contains("НООКАТ") | punkt.Contains("КОК-ЖАР") |
+                        punkt.Contains("ЖАНЫ-БАЗАР") | punkt.Contains("МАСАЛИЕВ") | punkt.Contains("АЙДАРКЕН") | punkt.Contains("КАЙТПАС") | punkt.Contains("МАРКАЗ") | punkt.Contains("САМЕРКАНДЕК"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН г. Кызылкия, Кадамжайского, Баткенского и Ноокатского районов");
@@ -844,8 +846,8 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("ИССЫК-КУЛЬ") | punkt.Contains("БОКОНБАЕВО") | punkt.Contains("ЖЕТИ-ОГУЗ") | punkt.Contains("БАЛЫКЧ") | punkt.Contains("ТОН") | punkt.Contains("ТЮП") |
-                        punkt.Contains("АНАНЬЕВО") | punkt.Contains("АКСУ") | punkt.Contains("КАРАКОЛ") | punkt.Contains("ЧОЛПОН-АТА") | punkt.Contains("ТАМЧИ"))
+                    if (punkt.Contains("ЫССЫК-КУЛЬ") | punkt.Contains("ЖЕТИ-ОГУЗ") | punkt.Contains("БАЛЫКЧ") | punkt.Contains("ТОН") | punkt.Contains("ТЮП") |
+                        punkt.Contains("АНАНЬЕВО") | punkt.Contains("АК-СУ") | punkt.Contains("КАРАКОЛ"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН по Иссык-Кульской области");
@@ -853,8 +855,8 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("НАРЫН") | punkt.Contains("КОЧКОР") | punkt.Contains("ЫССЫК-АТИНСКОГО") | punkt.Contains("КАНТ") | punkt.Contains("ТОКМОК") |
-                        punkt.Contains("КЕМИН") | punkt.Contains("ИВАНОВКА") | punkt.Contains("ТАШ-ДОБО") | punkt.Contains("ОКТЯБРЬСКОЕ") | punkt.Contains("ВАСИЛЬЕВСКОЕ") | punkt.Contains("ЧУЙ"))
+                    if (punkt.Contains("НАРЫН") | punkt.Contains("КОЧКОР") | punkt.Contains("ЫССЫК-АТИНСКОГО") | punkt.Contains("ТОКМОК") |
+                        punkt.Contains("КЕМИН") | punkt.Contains("ИВАНОВКА") | punkt.Contains("ТАШ-ДОБО") | punkt.Contains("ОКТЯБРЬСКОЕ") | punkt.Contains("ЧУЙ"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН Чуйской областипо восточной части, Кочкорского и Нарынского районов");
@@ -862,8 +864,8 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("ЖАЙЫЛСКОГО") | punkt.Contains("КАРА-БУУРИНС") | punkt.Contains("МАНАСКОГО") | punkt.Contains("СОКУЛУКСКОГО") | punkt.Contains("МОСКОВСКОГО") |
-                        punkt.Contains("БАКАЙ-АТ") | punkt.Contains("ТАЛАС") | punkt.Contains("СУУСАМЫР") | punkt.Contains("ПАНФИЛОВСКОГО"))
+                    if (punkt.Contains("ЖАЙЫЛСКОГО") | punkt.Contains("КАРА-БУРИ") | punkt.Contains("МАНАССКОГО") | punkt.Contains("СОКУЛУКСКОГО") | punkt.Contains("МОСКОВСКОГО") |
+                        punkt.Contains("БАКАЙ-АТ") | punkt.Contains("ТАЛАС") | punkt.Contains("ПАНФИЛОВСКОГО"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН Чуйской области по западной части и все районы Таласской областей");
@@ -871,7 +873,7 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("АКТАЛ"))
+                    if (punkt.Contains("АК-ТАЛ"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН Ак-Талинского района");
@@ -887,10 +889,10 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("КАРА-КУЛЬ") | punkt.Contains("МАЙЛУУ-СУУ") | punkt.Contains("ТАШ-КУМЫР") | punkt.Contains("УЧТЕРЕК") | punkt.Contains("ТЕРЕК-СУУ") | punkt.Contains("ТОЛУК") |
-                        punkt.Contains("ШАМАЛДЫСАЙ") | punkt.Contains("НООКЕН") | punkt.Contains("АРСЛАНБАБ") | punkt.Contains("СУЗАК") | punkt.Contains("ОКТЯБРЬ") | punkt.Contains("КЫЗЫЛ-ТУУ") |
-                        punkt.Contains("КОК-АРТ") | punkt.Contains("БАРПЫ") | punkt.Contains("КОК-ЖАНГАК") | punkt.Contains("АТАБЕКОВ") | punkt.Contains("КАРА-ДАРЬЯ") | punkt.Contains("ТОКТОГУЛ") |
-                        punkt.Contains("БАЗАР-КОРГОН") | punkt.Contains("БУРГОНДУ") | punkt.Contains("КОЧКОР-АТА") | punkt.Contains("ОЗГОРУШ"))
+                    if (punkt.Contains("КАРА-КУЛЬ") | punkt.Contains("МАЙЛУУ-СУУ") | punkt.Contains("ТАШ-КУМЫР") | punkt.Contains("УЧ-ТЕРЕК") | punkt.Contains("ТЕРЕК-СУУ") | punkt.Contains("ТОЛУК") |
+                        punkt.Contains("ШАМАЛДЫ-САЙ") | punkt.Contains("НООКЕН") | punkt.Contains("АРСЛАНБАБ") | punkt.Contains("СУЗАК") | punkt.Contains("ОКТЯБРЬСКОЕ") | punkt.Contains("КЫЗЫЛ-ТУУ") |
+                        punkt.Contains("КОК-АРТ") | punkt.Contains("БАРПЫ") | punkt.Contains("КОК-ЖАНГАК") | punkt.Contains("АТАБЕКОВ") | punkt.Contains("КАРА-ДАРЫЯ") | punkt.Contains("ТОКТОГУЛ") |
+                        punkt.Contains("БАЗАР-КОРГОН") | punkt.Contains("БУРГОНДУ") | punkt.Contains("КОЧКОР-АТА"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "Все районы Жалал-Абадской области, кроме Аксы, Ала-Бука");
@@ -898,7 +900,7 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("АЛА-БУК") | punkt.Contains("1 МАЙ") | punkt.Contains("АК-КОРГОН"))
+                    if (punkt.Contains("АЛА-БУК") | punkt.Contains("ПЕРВОМАЙСКИЙ") | punkt.Contains("АК-КОРГОН"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН Ала-Букинского района");
@@ -906,23 +908,8 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("ЧАТКАЛ") | punkt.Contains("СУМСАР"))
-                    {
-                        SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
-                        cmd.Parameters.AddWithValue("@marshrut", "ОПРН Чаткальского района");
-                        cmd.Parameters.AddWithValue("@stoimost", 1100);
-                        cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
-                        cmd.ExecuteNonQuery();
-                    }
-                    if (punkt.Contains("АКСЫ") | punkt.Contains("КЫЗЫЛ-ЖАР") | punkt.Contains("КАРА-ЖЫГАЧ") | punkt.Contains("ЖАНЫ-ЖОЛ") | punkt.Contains("НАЗАРАЛИЕВ"))
-                    {
-                        SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
-                        cmd.Parameters.AddWithValue("@marshrut", "ОПРН Аксыйского района");
-                        cmd.Parameters.AddWithValue("@stoimost", 620);
-                        cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
-                        cmd.ExecuteNonQuery();
-                    }
-                    if (punkt.Contains("ТОГУЗ-ТОРО") | punkt.Contains("КАЗАРМАН"))
+                    
+                    if (punkt.Contains("ТОГУЗ-ТОРО"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН Тогуз-Тороузкого района");
@@ -930,7 +917,7 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("ЛЕЙЛЕК") | punkt.Contains("ИНТЕРНАЦИОНАЛ") | punkt.Contains("КОРГОН") | punkt.Contains("АРКА"))
+                    if (punkt.Contains("ЛЕЙЛЕК") | punkt.Contains("ИНТЕРНАЦИОНАЛ"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН Лейлекского района");
@@ -946,7 +933,7 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("КАРА-КУЛЬЖ") | punkt.Contains("КЫЗЫЛЖАР") | punkt.Contains("УЗГЕН") | punkt.Contains("МЫРЗАКИ") | punkt.Contains("ЖЫЛАЛДЫ") | punkt.Contains("КУРШАБ"))
+                    if (punkt.Contains("КАРА-КУЛЬЖ") | punkt.Contains("КЫЗЫЛ-ЖАР") | punkt.Contains("УЗГЕН") | punkt.Contains("МЫРЗАКИ") | punkt.Contains("ЖЫЛАНДЫ") | punkt.Contains("КУРШАБ"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН Кара-Кульджинского и Узгенского районов");
@@ -954,7 +941,7 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("КАРА-СУЙСК") | punkt.Contains("НАРИМАН") | punkt.Contains("МАДЫ") | punkt.Contains("ОТУЗ-АДЫР") | punkt.Contains("ПАПАН") | punkt.Contains("ТОЛЕЙКЕН"))
+                    if (punkt.Contains("КАРА-СУЙСК") | punkt.Contains("НАРИМАН") | punkt.Contains("МАДЫ") | punkt.Contains("ОТУЗ-АДЫР") | punkt.Contains("ПАПАН"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН Кара-Суйского района");
@@ -970,7 +957,7 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("АЛАЙ") | punkt.Contains("ГУЛЬЧА") | punkt.Contains("САРЫТАШ") | punkt.Contains("СОПУ КОРГОН"))
+                    if (punkt.Contains("АЛАЙ") | punkt.Contains("САРЫ-ТАШ") | punkt.Contains("СОПУ-КОРГОН"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН Алайского района");
@@ -986,7 +973,7 @@ namespace ЦМПОЛ_passports
                         cmd.Parameters.AddWithValue("@id", Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value));
                         cmd.ExecuteNonQuery();
                     }
-                    if (punkt.Contains("АТ-БАШИ") | punkt.Contains("ТОРУГАРТ"))
+                    if (punkt.Contains("АТ-БАШИ"))
                     {
                         SqlCommand cmd = new SqlCommand("UPDATE [Table_pass] SET marshrut = @marshrut, stoimost = @stoimost WHERE id = @id", con);
                         cmd.Parameters.AddWithValue("@marshrut", "ОПРН Ат-Башинского района");
@@ -2412,6 +2399,118 @@ namespace ЦМПОЛ_passports
             con.Close();//закрыть соединение
             dataGridView1.Visible = false;
             dataGridView2.Visible = true;
+        }
+
+        //-------------------------------------------------------------------------------///
+        private string fileName = string.Empty;
+        private DataTableCollection tableCollection = null;
+        private void OpenExcelFile(string path)//Считывание Excel таблицы в DataGridView
+        {
+            FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
+            IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
+            DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration()
+            {
+                ConfigureDataTable = (x) => new ExcelDataTableConfiguration()
+                {
+                    UseHeaderRow = true
+                }
+            });
+            tableCollection = db.Tables;
+
+            comboBox7.Items.Clear();
+            foreach (DataTable table in tableCollection)
+            {
+                comboBox7.Items.Add(table.TableName);
+            }
+            comboBox7.SelectedIndex = 0;
+        }
+        private void ComboBox7_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DataTable table = tableCollection[Convert.ToString(comboBox7.SelectedItem)];
+            dataGridView3.DataSource = table;
+        }
+        private void button9_Click(object sender, EventArgs e)//Загрузить пункты из Excel
+        {
+            if (dataGridView3.Rows.Count <= 0)//Если грид пустой
+            {
+                try
+                {
+                    dataGridView2.Visible = false;
+                    dataGridView1.Visible = false;
+                    dataGridView3.Visible = true;
+                    OpenFileDialog ofd = new OpenFileDialog
+                    {
+                        Filter = "Excel|*.xlsx;*.xls"
+                    };
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                    {
+                        fileName = ofd.FileName;
+                        Text = fileName;
+                        OpenExcelFile(fileName);
+                        button9.Text = "Загрузить Excel";
+                    }
+                    else
+                    {
+                        throw new Exception("Файл не выбран!");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    comboBox7.SelectedIndex = -1;
+                    comboBox7.Items.Clear();
+                    button9.Text = "Открыть Excel";
+                    dataGridView2.Visible = true;
+                    dataGridView1.Visible = false;
+                    dataGridView3.Visible = false;
+                }
+            }
+            else if (dataGridView3.Rows.Count > 0)//Если грид не пустой
+            {
+                try
+                {
+                    if (comboBox7.Text != "")
+                    {
+                        button9.Text = "Ожидайте!";
+                        button9.Enabled = false;
+                            dataGridView2.Visible = true;
+                            dataGridView1.Visible = false;
+                            con.Open();//открыть соединение
+                            for (int i = 0; i < dataGridView3.Rows.Count; i++)
+                            {
+                                SqlCommand cmd = new SqlCommand("INSERT INTO [Table_punkts] (punkt) VALUES (@punkt)", con);
+                                cmd.Parameters.AddWithValue("@punkt", Convert.ToString(dataGridView3.Rows[i].Cells[1].Value));
+                                cmd.ExecuteNonQuery();
+                            }
+                            con.Close();//закрыть соединение
+                            MessageBox.Show("успешно загружен!", "Внимание!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            dataGridView2.Visible = true;
+                            dataGridView1.Visible = false;                        
+                    }                   
+                    else
+                        MessageBox.Show("Откройте Excel!", "Внимание!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception exp)
+                {
+                    MessageBox.Show("Ошибка! Excel файл содержит ошибку или неправельно сформирован! " + Environment.NewLine + exp, "Внимание!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    con.Close();//закрыть соединение
+                }
+                dataGridView2.Visible = true;
+                dataGridView1.Visible = false;
+
+                button9.Text = "Открыть Excel";
+                button9.Enabled = true;
+                //-------------Очистка грида---------------//
+                int rowsCount = dataGridView3.Rows.Count;
+                for (int i = 0; i < rowsCount; i++)
+                {
+                    dataGridView3.Rows.Remove(dataGridView3.Rows[0]);
+                }
+                //-------------Очистка грида---------------//
+                comboBox7.SelectedIndex = -1;
+                comboBox7.Items.Clear();
+            }
         }
     }
 }
